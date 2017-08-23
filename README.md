@@ -1,0 +1,2 @@
+# cinema
+Play movies automatically
