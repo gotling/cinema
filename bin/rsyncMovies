@@ -1,0 +1,4 @@
+#!/bin/bash
+touch /home/pi/Movies/TOUCHED
+until ping -c1 emby.lan &>/dev/null; do :; done
+/usr/bin/rsync -aHv --numeric-ids --delete --progress -e "/usr/bin/ssh -i /home/pi/.ssh/id_rsa -T -c aes128-ctr -o Compression=no -x" marcus@emby.lan:/Users/Shared/BeachCinema/ /home/pi/Movies/

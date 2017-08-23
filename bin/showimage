@@ -1,0 +1,2 @@
+/usr/bin/fbi -d /dev/fb0\
+  --once --noverbose --autozoom /home/pi/poster.jpg
