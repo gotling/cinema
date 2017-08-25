@@ -14,7 +14,6 @@ const movieFolder = '/movies/';
 var movie = 'Storks (2016)/Storks.2016.mkv';
 var fileName = movieFolder + movie;
 var movies = [];
-//var player = Omx('/home/pi/Movies/Moana.2016.720p.BRRip.950MB.MkvCage.mkv', 'both', true, 0, true);
 var player = Omx();
 
 const app = express();
@@ -109,10 +108,6 @@ var server = app.listen(3000, () => {
 function getMovies() {
   movies = walkSync(movieFolder);
   console.log(movies);
-  // fs.readdirSync(movieFolder).forEach(file => {
-  //   console.log(file);
-  //   movies.push(file);
-  // });
 }
 
 // Handle keyboard input
