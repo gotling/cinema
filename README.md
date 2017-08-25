@@ -1,2 +1,2 @@
-# cinema
-Play movies automatically
+# Cinema
+Play movies automatically on Raspberry Pi using OMX Player
