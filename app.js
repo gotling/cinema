@@ -59,7 +59,7 @@ app.post('/control', (req, res) => {
       player.nextSubtitle();
       break;
     case 'filename.play':
-      fileName = movieFolder + req.body['filename.play'];
+      fileName = req.body['filename.play'];
       player.newSource(fileName, 'both', true, 0, true);
       break;
     case 'filename.set':
