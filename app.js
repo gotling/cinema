@@ -63,8 +63,8 @@ app.post('/control', (req, res) => {
       player.newSource(fileName, 'both', true, 0, true);
       break;
     case 'filename.set':
-      console.log(req.body);
-      fileName = movieFolder + req.body['filename.set'];
+      fileName = req.body['filename.set'];
+      writeFileNameToDisk(fileName);
       break;
     case 'volume.up':
       player.volUp();
@@ -93,6 +93,7 @@ app.get('/quit', (req, res) => {
 var server = app.listen(3000, () => {
   console.log('CINEMA STARTED');
   getMovies();
+  readFileNameFromDisk();
   //showImage('/home/pi/poster.jpg');
 });
 
@@ -172,5 +173,28 @@ function showImage(fileName) {
     }
 
     console.log(`Number of files ${stdout}`);
+  });
+}
+
+function writeFileNameToDisk(fileName) {
+  fs.writeFile("/home/pi/nextMovie.txt", fileName, function(err) {
+    console.log('WRITE');
+    if (err) {
+      return console.log(err);
+    } else {
+      console.log("Next movie saved to file");
+    }
+  });
+}
+
+function readFileNameFromDisk() {
+  fs.readFile('/home/pi/nextMovie.txt', 'utf8', function (err, data) {
+    console.log('READ');
+    if (err) {
+      return console.log(err);
+    } else {
+      console.log('Next movie read from file: ' + data);
+      fileName = data;
+    }
   });
 }
