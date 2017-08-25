@@ -58,6 +58,9 @@ app.post('/control', (req, res) => {
       case 'volume.down':
         player.volDown();
         break;
+      case 'stop':
+        player.quit();
+        break;
     }
   }
 
