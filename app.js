@@ -3,12 +3,18 @@ var bodyParser = require('body-parser');
 var keypress = require('keypress');
 var Omx = require('node-omxplayer');
 const fs = require('fs');
+var fetch = require('node-fetch');
 
 let spawn = require('child_process').spawn;
 const { exec } = require('child_process');
 
 //require('node-define');
 //var ApiClient = require('./static/emby.apiclient');
+
+const embyServer = 'http://emby.lan:8096/';
+const embyApiKey = '';
+const embyUserId = '';
+const embyPlaylistId = '';
 
 const movieFolder = '/movies/';
 var movie = 'Storks (2016)/Storks.2016.mkv';
@@ -100,6 +106,7 @@ app.get('/quit', (req, res) => {
 
 var server = app.listen(3000, () => {
   console.log('CINEMA STARTED');
+  //getPlaylist();
   getMovies();
   readFileNameFromDisk();
   //showImage('/home/pi/poster.jpg');
@@ -200,5 +207,13 @@ function readFileNameFromDisk() {
       console.log('Next movie read from file: ' + data);
       fileName = data;
     }
+  });
+}
+
+function getPlaylist() {
+  fetch(embyServer + '/Users/' + embyUserId + '/Items?parentId=' + embyPlaylistId + '&api_key=' + embyApiKey).then(function(response) {
+    return response.json();
+  }).then(function(playlist) {
+    console.log(playlist);
   });
 }
