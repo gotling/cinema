@@ -32,31 +32,42 @@ app.get('/movies', (req, res) => {
 });
 
 app.post('/control', (req, res) => {
-  if (!player.running) {
-    player.newSource(fileName, 'both', true, 0, true);
-    player.pause();
+  if (player.running) {
+    switch(req.body.action) {
+      case 'fwd30':
+        player.fwd30();
+        break;
+      case 'fwd600':
+        player.fwd600();
+        break;
+      case 'back30':
+        player.back30();
+        break;
+      case 'back600':
+        player.back600();
+        break;
+      case 'subtitle.toggle':
+        player.subtitles();
+        break;
+      case 'subtitle.next':
+        player.nextSubtitle();
+        break;
+      case 'volume.up':
+        player.volUp();
+        break;
+      case 'volume.down':
+        player.volDown();
+        break;
+    }
   }
+
   switch(req.body.action) {
     case 'play':
-      player.play();
-      break;
-    case 'fwd30':
-      player.fwd30();
-      break;
-    case 'fwd600':
-      player.fwd600();
-      break;
-    case 'back30':
-      player.back30();
-      break;
-    case 'back600':
-      player.back600();
-      break;
-    case 'subtitle.toggle':
-      player.subtitles();
-      break;
-    case 'subtitle.next':
-      player.nextSubtitle();
+      if (!player.running) {
+        player.newSource(fileName, 'both', true, 0, true);
+      } else {
+        player.play();
+      }
       break;
     case 'filename.play':
       fileName = req.body['filename.play'];
@@ -66,14 +77,9 @@ app.post('/control', (req, res) => {
       fileName = req.body['filename.set'];
       writeFileNameToDisk(fileName);
       break;
-    case 'volume.up':
-      player.volUp();
-      break;
-    case 'volume.down':
-      player.volDown();
-      break;
-    default:
-      console.log('Unknown action');
+    case 'url.play':
+      url = req.body['url.play'];
+      player.newSource(url, 'both', true, 0, true);
       break;
   }
   res.redirect('/');
