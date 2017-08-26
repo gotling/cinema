@@ -1,8 +1,9 @@
 const fs = require('fs');
 const path = require('path');
 
-var rootFolder = '/movies/';
-const expectedFiles = ['Images/fanart.jpg', 'Images/landscape.jpg', 'Images/logo.png', 'Images/poster.jpg'];
+const rootFolder = '/movies/';
+const imageFolder = 'Images'
+const expectedImages = ['fanart.jpg', 'landscape.jpg', 'logo.png', 'poster.jpg'];
 const expectedMovieExtension = ['.mkv', '.mp4'];
 const expectedSubtitleExtension = '.srt';
 
@@ -27,6 +28,12 @@ exports.missingFiles = function missingFiles(folder) {
 
     if (!movieExists) {
         missing.push('movie');
+    }
+
+    for (var image of expectedImages) {
+        if (!fs.existsSync(path.join(rootFolder, folder, 'Images', image))) {
+            missing.push(image);
+        }
     }
 
     return missing;

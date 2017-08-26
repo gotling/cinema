@@ -1,5 +1,6 @@
 var chai = require('chai');
 var expect = chai.expect;
+chai.use(require('chai-things'));
 var mock = require('mock-fs');
 var sync = require('../sync');
 
@@ -28,23 +29,30 @@ describe('Sync', () => {
 
     it('folderExists("Despicable Me 3") should return false', () => {
         var exists = sync.folderExists('Despicable Me 3 (2017)');
-        expect(exists == false);
+        expect(exists).equals(false);
     });
 
     it('folderExists("The Boss Baby") should return true', () => {
         var exists = sync.folderExists('The Boss Baby (2017)');
-        expect(exists == false);
+        expect(exists).equals(true);
     });
 
     it('missingFiles("The Boss Baby") should return empty array', () => {
         var missingFiles = sync.missingFiles("The Boss Baby (2017)");
-        expect(Array.isArray(missingFiles) == true);
-        expect(missingFiles.length == 0);
+        expect(Array.isArray(missingFiles)).equals(true);
+        expect(missingFiles.length).equals(0);
     });
 
     it('missingFiles("Moana") should return missing files array', () => {
         var missingFiles = sync.missingFiles("Moana (2016)");
-        expect(Array.isArray(missingFiles) == true);
-        expect(missingFiles.length == 6);
+
+        expect(Array.isArray(missingFiles)).equals(true);
+        expect(missingFiles.length).equals(5);
+        expect(missingFiles).to.include('subtitle');
+        expect(missingFiles).to.include('poster.jpg');
+        expect(missingFiles).to.include('fanart.jpg');
+        expect(missingFiles).to.include('landscape.jpg');
+        expect(missingFiles).to.include('logo.png');
+    });
     });
 });
