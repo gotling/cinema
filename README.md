@@ -1,9 +1,9 @@
 # Cinema
-Play movies automatically on Raspberry Pi using [OMX Player](http://elinux.org/Omxplayer).
+Play movies automatically on Raspberry Pi using [OMX player](http://elinux.org/Omxplayer).
 
 ## Prerequisite
 
-A Raspberry Pi running [Raspbian](https://www.raspberrypi.org/downloads/raspbian/) *Jessie Lite* or *Stretch Lite* with user named *pi*.
+A Raspberry Pi running [Raspbian](https://www.raspberrypi.org/downloads/raspbian/) *Jessie Lite* or *Stretch Lite* with a user named *pi*.
 
 ## Installation
 
@@ -27,9 +27,10 @@ Clone repository:
 
 Install dependencies:
 
+    cd ~/cinema/
     npm install --no-bin-links
 
-Reoccurring tasks:
+Setup reoccurring tasks:
 
     crontab -e
 
@@ -52,7 +53,6 @@ Run as service:
     pm2 save
     pm2 startup
     sudo env PATH=$PATH:/usr/bin /usr/lib/node_modules/pm2/bin/pm2 startup systemd -u pi --hp /home/pi
-    pm2 reload ecosystem.config.js --update-env production
 
 ## Configuration
 
