@@ -93,7 +93,12 @@ app.get('/quit', (req, res) => {
 
 var server = app.listen(3000, () => {
   console.log('CINEMA STARTED');
-  //getPlaylist();
+  // emby.getPlaylist().then((playlist, err) => {
+  //     if (err) {
+  //         console.err(err);
+  //     }
+  //     console.log(playlist);
+  // });
   getMovies();
   readFileNameFromDisk();
 });
@@ -140,13 +145,5 @@ function readFileNameFromDisk() {
       console.log('Next movie read from file: ' + data);
       fileName = data;
     }
-  });
-}
-
-function getPlaylist() {
-  fetch(embyServer + '/Users/' + embyUserId + '/Items?parentId=' + embyPlaylistId + '&api_key=' + embyApiKey).then(function(response) {
-    return response.json();
-  }).then(function(playlist) {
-    console.log(playlist);
   });
 }
