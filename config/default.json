@@ -1,0 +1,11 @@
+{
+    "cinema": {
+        "movie-folder": "/data/Media/Movies/"
+    },
+    "emby": {
+        "server": "http://emby.lan:8096",
+        "api-key": "undefined",
+        "user-id": "undefined",
+        "playlist-id": "undefined"
+    }
+}

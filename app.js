@@ -2,14 +2,11 @@ const express = require('express');
 var bodyParser = require('body-parser');
 var Omx = require('node-omxplayer');
 const fs = require('fs');
-var fetch = require('node-fetch');
+var config = require('config');
 
-const embyServer = 'http://emby.lan:8096/';
-const embyApiKey = '';
-const embyUserId = '';
-const embyPlaylistId = '';
+var emby = require('./emby');
 
-const movieFolder = '/data/Media/Movies/';
+const movieFolder = config.get('cinema.movie-folder');
 var fileName = '';
 var movies = [];
 var player = Omx();
