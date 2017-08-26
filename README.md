@@ -52,10 +52,20 @@ Run as service:
     pm2 save
     pm2 startup
     sudo env PATH=$PATH:/usr/bin /usr/lib/node_modules/pm2/bin/pm2 startup systemd -u pi --hp /home/pi
+    pm2 reload ecosystem.config.js --update-env production
 
 ## Configuration
 
-TODO
+Copy default config file to production:
+
+    cd ~/cinema/config/
+    cp default.json production.json
+
+Open *production.json* and change values to real ones.
+
+Then reload service:
+
+    pm2 reload cinema
 
 ## Usage
 
