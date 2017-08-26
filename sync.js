@@ -38,3 +38,11 @@ exports.missingFiles = function missingFiles(folder) {
 
     return missing;
 }
+
+exports.getBaseName = function getBaseName(movie) {
+    return `${movie.Name} (${movie.ProductionYear})`;
+}
+
+function createFolderStructure(movie) {
+    var baseName = getBaseName(movie);
+}
