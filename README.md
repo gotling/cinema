@@ -29,13 +29,17 @@ Install dependencies:
 
     npm install --no-bin-links
 
-Cronjob to start movie automatically:
+Reoccurring tasks:
 
     crontab -e
 
-Paste the following, in this case every day at 19:00:
+Paste the following to start movie every day at 19:00:
 
     0 19 * * * curl http://localhost:3000/play
+
+Paste the following to delete old log files on boot:
+
+    @reboot rm ~/cinema/omxplayer.old.log*
 
 Start slideshow on login.
 
