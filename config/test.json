@@ -1,0 +1,7 @@
+{
+    "emby": {
+        "server": "http://emby.test:8096",
+        "api-key": "api-key",
+        "user-id": "user-id",
+        "playlist-id": "playlist-id"
+}
