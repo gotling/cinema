@@ -15,7 +15,7 @@
     "keypress": "^0.2.1",
     "node-define": "^0.1.1",
     "node-fetch": "^1.7.2",
-    "node-omxplayer": "^0.6.1",
+    "node-omxplayer": "git+https://git@github.com/gotling/node-omxplayer",
     "purecss": "^1.0.0",
     "requirejs": "^2.3.5"
   },
