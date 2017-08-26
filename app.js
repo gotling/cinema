@@ -1,32 +1,22 @@
 const express = require('express');
 var bodyParser = require('body-parser');
-var keypress = require('keypress');
 var Omx = require('node-omxplayer');
 const fs = require('fs');
 var fetch = require('node-fetch');
-
-let spawn = require('child_process').spawn;
-const { exec } = require('child_process');
-
-//require('node-define');
-//var ApiClient = require('./static/emby.apiclient');
 
 const embyServer = 'http://emby.lan:8096/';
 const embyApiKey = '';
 const embyUserId = '';
 const embyPlaylistId = '';
 
-const movieFolder = '/movies/';
-var movie = 'Storks (2016)/Storks.2016.mkv';
-var fileName = movieFolder + movie;
+const movieFolder = '/data/Media/Movies/';
+var fileName = '';
 var movies = [];
 var player = Omx();
 
 const app = express();
 app.use(express.static(__dirname + '/static'));
 app.use(bodyParser.urlencoded({extended: true}));
-
-keypress(process.stdin);
 
 app.get('/', (req, res) => {
   res.sendFile('index.html');
@@ -109,49 +99,12 @@ var server = app.listen(3000, () => {
   //getPlaylist();
   getMovies();
   readFileNameFromDisk();
-  //showImage('/home/pi/poster.jpg');
 });
 
 function getMovies() {
   movies = walkSync(movieFolder);
   console.log(movies);
 }
-
-// Handle keyboard input
-process.stdin.on('keypress', function (ch, key) {
-  console.log(key);
-
-  if (key.ctrl && key.name == 'c') {
-    if (player.running) {
-      player.quit();
-    }
-    server.close();
-    process.stdin.pause();
-  }
-
-  if (player.running && key) {
-    if ((key.name == 'q') || (key.ctrl && key.name == 'c')) {
-      player.quit();
-      process.stdin.pause();
-      server.close();
-    } else if (key.name == 'space') {
-      player.play();
-    } else if (key.name == 'left') {
-      player.back30();
-    } else if (key.name == 'right') {
-      player.fwd30();
-    } else if (key.name == 'up') {
-      player.fwd600();
-    } else if (key.name == 'down') {
-      player.back600();
-    } else {
-      player.passThroughKey(key.name);
-    }
-  }
-});
-
-//process.stdin.setRawMode(true);
-process.stdin.resume();
 
 // List all files in a directory in Node.js recursively in a synchronous fashion
 var walkSync = function(dir, filelist) {
@@ -169,23 +122,6 @@ var walkSync = function(dir, filelist) {
   });
   return filelist;
 };
-
-function showImage(fileName) {
-  let args = ['-d', '/dev/fb0', '--once', '--noverbose', '--autozoom'];
-  args.push(fileName);
-  //console.log('args for fbi:', args);
-  //var fbiProcess = spawn('/usr/bin/fbi', args);
-  let command = '/usr/bin/fbi -T 2 ' + args.join(' ');
-  console.log('exec command: ' + command);
-  exec(command, (err, stdout, stderr) => {
-    if (err) {
-      console.error(`exec error: ${err}`);
-      return;
-    }
-
-    console.log(`Number of files ${stdout}`);
-  });
-}
 
 function writeFileNameToDisk(fileName) {
   fs.writeFile("/home/pi/nextMovie.txt", fileName, function(err) {
