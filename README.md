@@ -44,7 +44,7 @@ Start slideshow on login.
 Run as service:
 
     cd ~/cinema/
-    pm2 start app.js --name cinema
+    pm2 start ecosystem.json --env production
     pm2 save
     pm2 startup
     sudo env PATH=$PATH:/usr/bin /usr/lib/node_modules/pm2/bin/pm2 startup systemd -u pi --hp /home/pi
