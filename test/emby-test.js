@@ -34,4 +34,17 @@ describe('Emby', () => {
             expect(favourite === false);
         });
     });
+
+    it('getImages(movie) should return filename and id of available images', () => {
+        var images = emby.getImages(testData.embyPlaylist[0]);
+        expect(images.length).equals(3);
+
+        images = emby.getImages(testData.embyPlaylist[1]);
+        expect(images.length).equals(4);
+    });
+
+    it('getImageUrl(movie, image) should return URL', () => {
+        var url = emby.getImageUrl(testData.embyPlaylist[0], "Primary");
+        expect(url).equals("http://emby.test:8096/emby/Items/ed93081b858f395fa72544b3a7a79374/Images/Primary?api_key=api-key");
+    });
 });

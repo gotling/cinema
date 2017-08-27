@@ -24,3 +24,31 @@ exports.getFavourite = function getFavourite(playlist) {
 
     return false;
 }
+
+exports.getImages = function getImages(movie) {
+    // poster.jpg, logo.png, landscape.jpg, fanart.jpg
+    // Type: Primary, Logo, Thumb, Backdrop
+    let images = [];
+
+    if ("Primary" in movie.ImageTags) {
+        images.push({"poster.jpg": "Primary"});
+    }
+
+    if ("Logo" in movie.ImageTags) {
+        images.push({"logo.png": "Logo"});
+    }
+
+    if ("Thumb" in movie.ImageTags) {
+        images.push({"landscape.jpg": "Thumb"});
+    }
+
+    if ("BackdropImageTags" in movie && movie.BackdropImageTags.length > 0) {
+        images.push({"fanart.jpg": "Backdrop"});
+    }
+
+    return images;
+}
+
+exports.getImageUrl = function getImageUrl(movie, image) {
+    return `${embyServer}/emby/Items/${movie.Id}/Images/${image}?api_key=${embyApiKey}`;
+}

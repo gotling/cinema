@@ -2,6 +2,7 @@ var chai = require('chai');
 var expect = chai.expect;
 chai.use(require('chai-things'));
 var mock = require('mock-fs');
+
 var sync = require('../sync');
 var testData = require('./test-data');
 
@@ -95,6 +96,16 @@ describe('Sync', () => {
         expect(actualFolders.length).equals(2);
         expect(actualFolders).to.include('The Boss Baby (2017)');
         expect(actualFolders).to.include('Moana (2016)');
+    });
+
+    it('downloadMissingFiles() to create folders and download files', () => {
+        sync.downloadMissingFiles(testData.embyPlaylist);
+        var actualFolders = sync.getActualFolders();
+        expect(actualFolders.length).equals(4);
+        expect(actualFolders).to.include('Despicable Me 3 (2017)');
+        expect(actualFolders).to.include('The Boss Baby (2017)');
+        expect(actualFolders).to.include('Moana (2016)');
+        expect(actualFolders).to.include('OLD MOVIE (2015)');
     });
 
     // it('downloadFile() should fetch file to filesystem', () => {
