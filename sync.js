@@ -4,6 +4,7 @@ var config = require('config');
 var request = require('request');
 var progress = require('request-progress');
 var rimraf = require('rimraf');
+var logger = require('winston');
 
 const rootFolder = '/movies/';
 const imageFolder = 'Images'
@@ -12,10 +13,16 @@ const expectedMovieExtension = ['.mkv', '.mp4'];
 const expectedSubtitleExtension = '.srt';
 
 exports.folderExists = function folderExists(folder) {
+    logger.debug("Looking for folder '%s'", folder);
     return fs.existsSync(path.join(rootFolder, folder));
 }
 
+exports.fileExists = function fileExists(filePath) {
+    return fs.existsSync(filePath);
+}
+
 exports.missingFiles = function missingFiles(folder) {
+    logger.debug("Looking for missing files in folder '%s'", folder);
     var missing = [];
 
     if (!fs.existsSync(path.join(rootFolder, folder, folder + expectedSubtitleExtension))) {
@@ -40,6 +47,8 @@ exports.missingFiles = function missingFiles(folder) {
         }
     }
 
+    logger.debug("Missing files found: %j", missing);
+
     return missing;
 }
 
@@ -48,11 +57,13 @@ exports.getBaseName = function getBaseName(movie) {
 }
 
 exports.getExpectedFolders = function getExpectedFolders(playlist) {
+    logger.debug("Getting expected folders for plalist");
     let expected = [];
     for (let movie of playlist) {
         expected.push(this.getBaseName(movie));
     }
 
+    logger.debug("Expected folders: %j", expected);
     return expected;
 }
 
@@ -61,6 +72,7 @@ exports.getActualFolders = function getActualFolders() {
 }
 
 exports.getExtraFolders = function getExtraFolders(playlist) {
+    logger.debug("Getting folders not in playlist");
     let expectedFolders = exports.getExpectedFolders(playlist);
     let actualFolders = exports.getActualFolders();
     let extraFolders = [];
@@ -71,11 +83,14 @@ exports.getExtraFolders = function getExtraFolders(playlist) {
         }
     }
 
+    logger.debug("Extra folders found: %j");
     return extraFolders;
 }
 
 exports.deleteExtraFolders = function deleteExtraFolders(playlist) {
+    logger.debug("Deleting extra folders");
     let foldersToDelete = exports.getExtraFolders(playlist);
+    logger.debug("Extra folders to delete: %j", foldersToDelete);
 
     for (let folder of foldersToDelete) {
         let folderToDelete = path.join(config.get('cinema.movie-folder'), folder);
@@ -84,6 +99,7 @@ exports.deleteExtraFolders = function deleteExtraFolders(playlist) {
 }
 
 function createFolderStructure(movie) {
+    logger.debug("Creating folder structure");
     var baseName = getBaseName(movie);
 }
 
