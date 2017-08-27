@@ -3,10 +3,14 @@ var bodyParser = require('body-parser');
 var Omx = require('node-omxplayer');
 const fs = require('fs');
 var config = require('config');
+var logger = require('winston');
 
 var emby = require('./emby');
 
+logger.add(logger.transports.File, { filename: 'logging.log' });
+
 const movieFolder = config.get('cinema.movie-folder');
+const nextMovieFile = "/home/pi/nextMovie.txt";
 var fileName = '';
 var movies = [];
 var player = Omx();
@@ -20,37 +24,48 @@ app.get('/', (req, res) => {
 });
 
 app.get('/movies', (req, res) => {
-  res.send(movies);
+    logger.info("Returning list of available files");
+    res.send(movies);
 });
 
 app.post('/control', (req, res) => {
   if (player.running) {
     switch(req.body.action) {
       case 'fwd30':
+        logger.info("Remote: Forwarding 30 seconds");
         player.fwd30();
+        winston
         break;
       case 'fwd600':
+        logger.info("Remote: Forwarding 600 seconds");
         player.fwd600();
         break;
       case 'back30':
+        logger.info("Remote: Rewinding 30 seconds");
         player.back30();
         break;
       case 'back600':
+        logger.info("Remote: Rewinding 600 seconds");
         player.back600();
         break;
       case 'subtitle.toggle':
+        logger.info("Remote: Toggle subtitles");
         player.subtitles();
         break;
       case 'subtitle.next':
+        logger.info("Remote: Next subtitle");
         player.nextSubtitle();
         break;
       case 'volume.up':
+        logger.info("Remote: Volume up");
         player.volUp();
         break;
       case 'volume.down':
+        logger.info("Remote: Volume down");
         player.volDown();
         break;
       case 'stop':
+        logger.info("Remote: Stop");
         player.quit();
         break;
     }
@@ -59,21 +74,26 @@ app.post('/control', (req, res) => {
   switch(req.body.action) {
     case 'play':
       if (!player.running) {
+        logger.info("Remote: Starting playback of pre set filename");
         player.newSource(fileName, 'both', true, 0, true);
       } else {
+        logger.info("Remote: Pausing/Resuming playback")
         player.play();
       }
       break;
     case 'filename.play':
       fileName = req.body['filename.play'];
+      logger.info("Remote: Starting playback of source '%s'", fileName);
       player.newSource(fileName, 'both', true, 0, true);
       break;
     case 'filename.set':
       fileName = req.body['filename.set'];
+      logger.info("Remote: Setting filename to '%s'", fileName);
       writeFileNameToDisk(fileName);
       break;
     case 'url.play':
       url = req.body['url.play'];
+      logger.info("Remote: Starting playback of source '%s'", fileName);
       player.newSource(url, 'both', true, 0, true);
       break;
   }
@@ -81,18 +101,20 @@ app.post('/control', (req, res) => {
 });
 
 app.get('/play', (req, res) => {
-  player.newSource(fileName, 'both', true, 0, true);
-  res.redirect('/');
+    logger.info('Starting playback of pre set filename');
+    player.newSource(fileName, 'both', true, 0, true);
+    res.redirect('/');
 });
 
 app.get('/quit', (req, res) => {
-  player.play();
-  player.quit();
-  res.sendStatus(200);
+    logger.info("Quiting player");
+    player.play();
+    player.quit();
+    res.sendStatus(200);
 });
 
 var server = app.listen(3000, () => {
-  console.log('CINEMA STARTED');
+  logger.info('Cinema started. Remote available on port 3000');
   // emby.getPlaylist().then((playlist, err) => {
   //     if (err) {
   //         console.err(err);
@@ -105,7 +127,7 @@ var server = app.listen(3000, () => {
 
 function getMovies() {
   movies = walkSync(movieFolder);
-  console.log(movies);
+  logger.info("Found %d available files", movies.length);
 }
 
 // List all files in a directory in Node.js recursively in a synchronous fashion
@@ -126,23 +148,21 @@ var walkSync = function(dir, filelist) {
 };
 
 function writeFileNameToDisk(fileName) {
-  fs.writeFile("/home/pi/nextMovie.txt", fileName, function(err) {
-    console.log('WRITE');
+  fs.writeFile(nextMovieFile, fileName, function(err) {
     if (err) {
-      return console.log(err);
+      logger.warn("Could not write next movie. Error: %s", err);
     } else {
-      console.log("Next movie saved to file");
+      logger.info("Saved next movie as '%s'", fileName);
     }
   });
 }
 
 function readFileNameFromDisk() {
-  fs.readFile('/home/pi/nextMovie.txt', 'utf8', function (err, data) {
-    console.log('READ');
+  fs.readFile(nextMovieFile, 'utf8', function (err, data) {
     if (err) {
-      return console.log(err);
+      logger.warn("Could not read next movie. Error: %s", err);
     } else {
-      console.log('Next movie read from file: ' + data);
+      logger.info("Read next movie. File name: '%s'", data);
       fileName = data;
     }
   });
