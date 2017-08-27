@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+var config = require('config');
 var request = require('request');
 var progress = require('request-progress');
 
@@ -45,8 +46,33 @@ exports.getBaseName = function getBaseName(movie) {
     return `${movie.Name} (${movie.ProductionYear})`;
 }
 
+exports.getExpectedFolders = function getExpectedFolders(playlist) {
+    let expected = [];
+    for (let movie of playlist) {
+        expected.push(this.getBaseName(movie));
+    }
+
+    return expected;
+}
+
+exports.getActualFolders = function getActualFolders() {
+    return getFolders(config.get('cinema.movie-folder'));
+}
+
 function createFolderStructure(movie) {
     var baseName = getBaseName(movie);
+}
+
+function getFolders(dir) {
+    let files = fs.readdirSync(dir);
+    let folders = [];
+    for (let file of files) {
+        if (fs.statSync(path.join(dir, file)).isDirectory()) {
+            folders.push(file);
+        }
+    }
+
+    return folders;
 }
 
 exports.downloadFile = function downloadFile(url, fileName) {

@@ -61,8 +61,22 @@ describe('Sync', () => {
         expect(baseName).equals('Moana (2016)');
     });
 
-    it('getExpectedFolders() should return 3 folders', () => {
-        var expectedFolders = sync.getExpectedFolders();
+    it('getExpectedFolders(playlist) should return 3 folders', () => {
+        var expectedFolders = sync.getExpectedFolders(testData.embyPlaylist);
+
+        expect(Array.isArray(expectedFolders)).equals(true);
+        expect(expectedFolders.length).equals(3);
+        expect(expectedFolders).to.include('Despicable Me 3 (2017)');
+        expect(expectedFolders).to.include('The Boss Baby (2017)');
+        expect(expectedFolders).to.include('Moana (2016)');
+    });
+
+    it('getActualFolders() to return "The Boss Baby (2017)" and "Moana (2016)"', () => {
+        var actualFolders = sync.getActualFolders();
+        expect(Array.isArray(actualFolders)).equals(true);
+        expect(actualFolders.length).equals(2);
+        expect(actualFolders).to.include('The Boss Baby (2017)');
+        expect(actualFolders).to.include('Moana (2016)');
     });
 
     // it('downloadFile() should fetch file to filesystem', () => {
