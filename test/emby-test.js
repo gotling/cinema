@@ -4,7 +4,7 @@ var nock = require('nock');
 var config = require('config');
 
 var emby = require('../emby');
-var testData = require('./test-data')
+var testData = require('./test-data');
 
 describe('Emby', () => {
     beforeEach(function() {
