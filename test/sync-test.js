@@ -20,7 +20,8 @@ describe('Sync', () => {
             },
             '/movies/Moana (2016)': {
                 'Moana (2016).mp4': ''
-            }
+            },
+            '/movies/OLD MOVIE (2015)': {}
         });
     });
 
@@ -74,9 +75,27 @@ describe('Sync', () => {
     it('getActualFolders() to return "The Boss Baby (2017)" and "Moana (2016)"', () => {
         var actualFolders = sync.getActualFolders();
         expect(Array.isArray(actualFolders)).equals(true);
-        expect(actualFolders.length).equals(2);
+        expect(actualFolders.length).equals(3);
         expect(actualFolders).to.include('The Boss Baby (2017)');
         expect(actualFolders).to.include('Moana (2016)');
+        expect(actualFolders).to.include('OLD MOVIE (2015)');
+    });
+
+    it('getExtraFolders(playlist) should return "OLD MOVIE (2015)"', () => {
+        let extraFolders = sync.getExtraFolders(testData.embyPlaylist);
+
+        expect(Array.isArray(extraFolders)).equals(true);
+        expect(extraFolders.length).equals(1);
+        expect(extraFolders).to.include('OLD MOVIE (2015)');
+    });
+
+    it('deleteExtraFolders() to delete folder "OLD MOVIE (2015)"', () => {
+        sync.deleteExtraFolders(testData.embyPlaylist);
+        // mock-fs does not seem to be compatible with rimraf, so mock fs is not updated
+        // var actualFolders = sync.getActualFolders();
+        // expect(actualFolders.length).equals(2);
+        // expect(actualFolders).to.include('The Boss Baby (2017)');
+        // expect(actualFolders).to.include('Moana (2016)');
     });
 
     // it('downloadFile() should fetch file to filesystem', () => {

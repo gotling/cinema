@@ -3,6 +3,7 @@ const path = require('path');
 var config = require('config');
 var request = require('request');
 var progress = require('request-progress');
+var rimraf = require('rimraf');
 
 const rootFolder = '/movies/';
 const imageFolder = 'Images'
@@ -57,6 +58,30 @@ exports.getExpectedFolders = function getExpectedFolders(playlist) {
 
 exports.getActualFolders = function getActualFolders() {
     return getFolders(config.get('cinema.movie-folder'));
+}
+
+exports.getExtraFolders = function getExtraFolders(playlist) {
+    let expectedFolders = exports.getExpectedFolders(playlist);
+    let actualFolders = exports.getActualFolders();
+    let extraFolders = [];
+
+    for (let actualFolder of actualFolders) {
+        if (expectedFolders.indexOf(actualFolder) === -1) {
+            extraFolders.push(actualFolder);
+        }
+    }
+
+    return extraFolders;
+}
+
+exports.deleteExtraFolders = function deleteExtraFolders(playlist) {
+    let foldersToDelete = exports.getExtraFolders(playlist);
+
+    for (let folder of foldersToDelete) {
+        let folderToDelete = path.join(config.get('cinema.movie-folder'), folder);
+        rimraf(folderToDelete, () => {
+        });
+    }
 }
 
 function createFolderStructure(movie) {

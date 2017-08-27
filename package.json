@@ -19,7 +19,8 @@
     "purecss": "^1.0.0",
     "request": "^2.81.0",
     "request-progress": "^3.0.0",
-    "requirejs": "^2.3.5"
+    "requirejs": "^2.3.5",
+    "rimraf": "^2.6.1"
   },
   "devDependencies": {
     "chai": "^4.1.1",
