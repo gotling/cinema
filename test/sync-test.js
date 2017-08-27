@@ -91,11 +91,10 @@ describe('Sync', () => {
 
     it('deleteExtraFolders() to delete folder "OLD MOVIE (2015)"', () => {
         sync.deleteExtraFolders(testData.embyPlaylist);
-        // mock-fs does not seem to be compatible with rimraf, so mock fs is not updated
-        // var actualFolders = sync.getActualFolders();
-        // expect(actualFolders.length).equals(2);
-        // expect(actualFolders).to.include('The Boss Baby (2017)');
-        // expect(actualFolders).to.include('Moana (2016)');
+        var actualFolders = sync.getActualFolders();
+        expect(actualFolders.length).equals(2);
+        expect(actualFolders).to.include('The Boss Baby (2017)');
+        expect(actualFolders).to.include('Moana (2016)');
     });
 
     // it('downloadFile() should fetch file to filesystem', () => {

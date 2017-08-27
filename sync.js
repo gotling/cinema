@@ -79,8 +79,7 @@ exports.deleteExtraFolders = function deleteExtraFolders(playlist) {
 
     for (let folder of foldersToDelete) {
         let folderToDelete = path.join(config.get('cinema.movie-folder'), folder);
-        rimraf(folderToDelete, () => {
-        });
+        rimraf.sync(folderToDelete);
     }
 }
 
