@@ -17,6 +17,8 @@
     "node-fetch": "^1.7.2",
     "node-omxplayer": "git+https://git@github.com/gotling/node-omxplayer",
     "purecss": "^1.0.0",
+    "request": "^2.81.0",
+    "request-progress": "^3.0.0",
     "requirejs": "^2.3.5"
   },
   "devDependencies": {
