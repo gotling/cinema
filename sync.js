@@ -129,10 +129,29 @@ function getFolders(dir) {
     return folders;
 }
 
+function byteToString(bytes) {
+    if (bytes >= 1048576) {
+        return Math.round(bytes / 1048576 * 10) / 10 + ' MiB';
+    } else if (bytes >= 1024) {
+        return Math.round(bytes / 1024) + ' KiB';
+    } else {
+        return bytes + ' B';
+    }
+}
+
+function secondsToString(seconds) {
+    if (seconds >= 60) {
+        return Math.round(seconds / 60) + ' minutes';
+    } else {
+        return Math.round(seconds) + ' seconds';
+    }
+}
+
 exports.downloadFile = function downloadFile(url, fileName) {
+    logger.info("'%s' download started", path.basename(fileName));
     progress(request(url), {
-        // throttle: 2000,                    // Throttle the progress event to 2000ms, defaults to 1000ms
-        // delay: 1000,                       // Only start to emit after 1000ms delay, defaults to 0ms
+        throttle: 2000,                    // Throttle the progress event to 2000ms, defaults to 1000ms
+        delay: 1000,                       // Only start to emit after 1000ms delay, defaults to 0ms
         // lengthHeader: 'x-transfer-length'  // Length header to use, defaults to content-length
     })
     .on('progress', function (state) {
@@ -149,14 +168,17 @@ exports.downloadFile = function downloadFile(url, fileName) {
         //         remaining: 81.403       // The remaining seconds to finish (3 decimals)
         //     }
         // }
-        console.log('progress', state);
+        let percent = Math.round(state.percent * 100);
+
+        logger.info('%s: %d%% %s/%s (%s/s) ETA: %s',
+            path.basename(fileName), percent, byteToString(state.size.transferred), byteToString(state.size.total), byteToString(state.speed), secondsToString(state.time.remaining));
     })
     .on('error', function (err) {
-        console.log(err);
-        // Do something with err
+        logger.error("Failed to download file '%s': %s", fileName, err);
+        // Do somethingfile with err
     })
     .on('end', function () {
-        console.log('ended');
+        logger.info("'%s' finished downloading", path.basename(fileName));
         // Do something after request finishes
     })
     .pipe(fs.createWriteStream(fileName));
