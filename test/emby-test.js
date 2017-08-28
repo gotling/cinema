@@ -47,4 +47,14 @@ describe('Emby', () => {
         var url = emby.getImageUrl(testData.embyPlaylist[0], "Primary");
         expect(url).equals("http://emby.test:8096/emby/Items/ed93081b858f395fa72544b3a7a79374/Images/Primary?api_key=api-key");
     });
+
+    it('getMovieUrl(movie) should return URL', () => {
+        var url = emby.getMovieUrl(testData.embyPlaylist[0]);
+        expect(url).equals("http://emby.test:8096/emby/Items/ed93081b858f395fa72544b3a7a79374/File?api_key=api-key");
+    });
+
+    it('getSubtitleUrl(movie) should return URL', () => {
+        var url = emby.getSubtitleUrl(testData.embyPlaylist[0]);
+        expect(url).equals("http://emby.test:8096/emby/Videos/ed93081b858f395fa72544b3a7a79374/ed93081b858f395fa72544b3a7a79374/Subtitles/2/Stream.srt?api_key=api-key");
+    })
 });
