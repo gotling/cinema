@@ -138,14 +138,10 @@ function setFbiImageFolder(movie) {
 
 var server = app.listen(config.get('cinema.port'), () => {
   logger.info('Cinema started. Remote available on port %d', config.get('cinema.port'));
-  // emby.getPlaylist().then((playlist, err) => {
-  //     if (err) {
-  //         console.err(err);
-  //     }
-  //     console.log(playlist);
-  // });
+
   getMovies();
   readFileNameFromDisk();
+  downloadAndSetMovie();
 });
 
 function setAndSaveNextMovie(filePath) {
