@@ -147,11 +147,20 @@ exports.downloadImages = function downloadImages(movie) {
 }
 
 exports.downloadMovie = function downloadMovie(movie) {
-    var baseName = exports.getBaseName(movie);
-    var extension = movie.Container;
-    var basePath = path.join(config.get('cinema.movie-folder'), baseName);
+    let baseName = exports.getBaseName(movie);
+    let extension = movie.Container;
+    let fileName = baseName + '.' + extension;
+    let basePath = path.join(config.get('cinema.movie-folder'), baseName);
+    let filePath = path.join(basePath, fileName);
     let url = emby.getMovieUrl(movie);
-    exports.downloadFile(url, path.join(basePath, baseName + '.' + extension));
+
+    if (exports.fileExists(filePath)) {
+        let urlSize = exports.getUrlFileSize(url);
+        // TODO: Check actual filesize and download again if different
+        logger.info("Movie '%s' alredy exists", fileName);
+    } else {
+        exports.downloadFile(url, path.join(basePath, baseName + '.' + extension));
+    }
 }
 
 function createFolder(dir) {
