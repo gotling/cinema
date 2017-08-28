@@ -102,6 +102,21 @@ exports.deleteExtraFolders = function deleteExtraFolders(playlist) {
     }
 }
 
+exports.getMovieFilePath = function getMovieFilePath(movie) {
+    let baseName = exports.getBaseName(movie);
+    let extension = movie.Container;
+    let fileName = baseName + '.' + extension;
+    let basePath = path.join(config.get('cinema.movie-folder'), baseName);
+    let filePath = path.join(basePath, fileName);
+
+    return filePath;
+}
+
+exports.getMovieImagePath = function getMovieImagePath(movie) {
+    let baseName = exports.getBaseName(movie);
+    return path.join(config.get('cinema.movie-folder'), baseName, imageFolder);
+}
+
 exports.downloadMissingFiles = function downloadMissingFiles(playlist) {
     for (let movie of playlist) {
         createFolderStructure(movie);
