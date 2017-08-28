@@ -6,6 +6,8 @@ var progress = require('request-progress');
 var rimraf = require('rimraf');
 var logger = require('winston');
 
+var emby = require('./emby');
+
 const rootFolder = '/movies/';
 const imageFolder = 'Images'
 const expectedImages = ['fanart.jpg', 'landscape.jpg', 'logo.png', 'poster.jpg'];
@@ -101,6 +103,16 @@ exports.deleteExtraFolders = function deleteExtraFolders(playlist) {
 }
 
 function createFolderStructure(movie) {
+exports.downloadImages = function downloadImages(movie) {
+    var baseName = exports.getBaseName(movie);
+    var basePath = path.join(config.get('cinema.movie-folder'), baseName);
+    let images = emby.getImages(movie);
+    for (let image of images) {
+        let url = emby.getImageUrl(movie, image.type);
+        exports.downloadFile(url, path.join(basePath, image.filename));
+    }
+}
+
     logger.debug("Creating folder structure");
     var baseName = getBaseName(movie);
 }

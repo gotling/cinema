@@ -31,19 +31,19 @@ exports.getImages = function getImages(movie) {
     let images = [];
 
     if ("Primary" in movie.ImageTags) {
-        images.push({"poster.jpg": "Primary"});
+        images.push({"filename": "poster.jpg", "type": "Primary"});
     }
 
     if ("Logo" in movie.ImageTags) {
-        images.push({"logo.png": "Logo"});
+        images.push({"filename": "logo.png", "type": "Logo"});
     }
 
     if ("Thumb" in movie.ImageTags) {
-        images.push({"landscape.jpg": "Thumb"});
+        images.push({"filename": "landscape.jpg", "type": "Thumb"});
     }
 
     if ("BackdropImageTags" in movie && movie.BackdropImageTags.length > 0) {
-        images.push({"fanart.jpg": "Backdrop"});
+        images.push({"filename": "fanart.jpg", "type": "Backdrop"});
     }
 
     return images;
