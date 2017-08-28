@@ -10,7 +10,8 @@ var emby = require('./emby');
 logger.add(logger.transports.File, { filename: 'logging.log' });
 
 const movieFolder = config.get('cinema.movie-folder');
-const nextMovieFile = "/home/pi/nextMovie.txt";
+const nextMovieFile = config.get('cinema.next-movie-file');
+const posterFolder = config.get('cinema.poster-folder');
 var fileName = '';
 var movies = [];
 var player = Omx();

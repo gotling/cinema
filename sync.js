@@ -44,7 +44,7 @@ exports.missingFiles = function missingFiles(folder) {
     }
 
     for (var image of expectedImages) {
-        if (!fs.existsSync(path.join(rootFolder, folder, 'Images', image))) {
+        if (!fs.existsSync(path.join(rootFolder, folder, imageFolder, image))) {
             missing.push(image);
         }
     }
