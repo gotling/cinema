@@ -115,6 +115,18 @@ app.get('/quit', (req, res) => {
     res.sendStatus(200);
 });
 
+function downloadAndSetMovie() {
+    logger.info("Download and set favourite movie");
+    emby.getPlaylist().then((playlist, err) => {
+        let favourite = emby.getFavourite(playlist.Items);
+        sync.downloadMovieFiles(favourite);
+        let filePath = sync.getMovieFilePath(favourite);
+        logger.info("Setting filename to '%s'", filePath);
+        setAndSaveNextMovie(filePath);
+        setFbiImageFolder(favourite);
+    });
+}
+
 function setFbiImageFolder(movie) {
     let imagePath = sync.getMovieImagePath(movie);
     logger.info("Updating poster folder to '%s'", imagePath);
@@ -135,6 +147,12 @@ var server = app.listen(config.get('cinema.port'), () => {
   getMovies();
   readFileNameFromDisk();
 });
+
+function setAndSaveNextMovie(filePath) {
+    logger.info("Setting filename to '%s'", filePath);
+    fileName = filePath;
+    writeFileNameToDisk(fileName);
+}
 
 function getMovies() {
   movies = walkSync(movieFolder);
