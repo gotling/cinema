@@ -124,9 +124,9 @@ exports.downloadMissingFiles = function downloadMissingFiles(playlist) {
 }
 
 exports.downloadMovieFiles = function downloadMovieFiles(movie) {
-    createFolderStructure(movie);
-    downloadImages(movie);
-    downloadMovie(movie);
+    exports.createFolderStructure(movie);
+    exports.downloadImages(movie);
+    exports.downloadMovie(movie);
 }
 
 exports.downloadImages = function downloadImages(movie) {
