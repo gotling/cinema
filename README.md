@@ -12,6 +12,10 @@ Install node.js:
     curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
     sudo apt install nodejs
 
+Allow nodejs to run on port 80 with standard user:
+
+    sudo setcap cap_net_bind_service=+ep /usr/bin/nodejs
+
 Install process manager:
 
     sudo npm install pm2 -g
@@ -36,7 +40,7 @@ Setup reoccurring tasks:
 
 Paste the following to start movie every day at 19:00:
 
-    0 19 * * * curl http://localhost:3000/play
+    0 19 * * * curl http://localhost/play
 
 Paste the following to delete old log files on boot:
 
@@ -59,7 +63,7 @@ Run as service:
 Copy default config file to production:
 
     cd ~/cinema/config/
-    cp default.json production.json
+    cp production.json-default production.json
 
 Open *production.json* and change values to real ones.
 
@@ -71,4 +75,4 @@ Then reload service:
 
 Open remote control:
 
-    http://ip-or-name:3000
+    http://ip-or-name/

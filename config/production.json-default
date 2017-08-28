@@ -1,0 +1,12 @@
+{
+    "cinema": {
+        "port": 80,
+        "movie-folder": "/movies/"
+    },
+    "emby": {
+        "server": "http://emby.lan:8096",
+        "api-key": "",
+        "user-id": "",
+        "playlist-id": ""
+    }
+}

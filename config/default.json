@@ -1,5 +1,6 @@
 {
     "cinema": {
+        "port": 3000,
         "movie-folder": "/data/Media/Movies/"
     },
     "emby": {
