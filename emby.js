@@ -52,3 +52,11 @@ exports.getImages = function getImages(movie) {
 exports.getImageUrl = function getImageUrl(movie, image) {
     return `${embyServer}/emby/Items/${movie.Id}/Images/${image}?api_key=${embyApiKey}`;
 }
+
+exports.getMovieUrl = function getMovieUrl(movie) {
+    return `${embyServer}/emby/Items/${movie.Id}/File?api_key=${embyApiKey}`;
+}
+
+exports.getSubtitleUrl = function getSubtitleUrl(movie) {
+    return `${embyServer}/emby/Videos/${movie.Id}/${movie.Id}/Subtitles/2/Stream.srt?api_key=${embyApiKey}`;
+}
