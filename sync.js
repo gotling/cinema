@@ -53,7 +53,9 @@ exports.missingFiles = function missingFiles(folder) {
 }
 
 exports.getBaseName = function getBaseName(movie) {
-    return `${movie.Name} (${movie.ProductionYear})`;
+    let name = `${movie.Name} (${movie.ProductionYear})`;
+    name = name.replace(':', ' -');
+    return name;
 }
 
 exports.getExpectedFolders = function getExpectedFolders(playlist) {
