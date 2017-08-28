@@ -6,6 +6,7 @@ var config = require('config');
 var logger = require('winston');
 
 var emby = require('./emby');
+var sync = require('./sync');
 
 logger.add(logger.transports.File, { filename: 'logging.log' });
 
@@ -113,6 +114,15 @@ app.get('/quit', (req, res) => {
     player.quit();
     res.sendStatus(200);
 });
+
+function setFbiImageFolder(movie) {
+    let imagePath = sync.getMovieImagePath(movie);
+    logger.info("Updating poster folder to '%s'", imagePath);
+    if (sync.fileExists(config.get("cinema.poster-folder"))) {
+        fs.unlinkSync(config.get("cinema.poster-folder"));
+    }
+    fs.symlinkSync(imagePath, config.get("cinema.poster-folder"));
+}
 
 var server = app.listen(config.get('cinema.port'), () => {
   logger.info('Cinema started. Remote available on port %d', config.get('cinema.port'));
