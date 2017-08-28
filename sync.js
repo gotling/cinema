@@ -102,7 +102,18 @@ exports.deleteExtraFolders = function deleteExtraFolders(playlist) {
     }
 }
 
-function createFolderStructure(movie) {
+exports.downloadMissingFiles = function downloadMissingFiles(playlist) {
+    for (let movie of playlist) {
+        createFolderStructure(movie);
+    }
+}
+
+exports.downloadMovieFiles = function downloadMovieFiles(movie) {
+    createFolderStructure(movie);
+    downloadImages(movie);
+    downloadMovie(movie);
+}
+
 exports.downloadImages = function downloadImages(movie) {
     var baseName = exports.getBaseName(movie);
     var basePath = path.join(config.get('cinema.movie-folder'), baseName);
@@ -113,8 +124,26 @@ exports.downloadImages = function downloadImages(movie) {
     }
 }
 
+exports.downloadMovie = function downloadMovie(movie) {
+    var baseName = exports.getBaseName(movie);
+    var extension = movie.Container;
+    var basePath = path.join(config.get('cinema.movie-folder'), baseName);
+    let url = emby.getMovieUrl(movie);
+    exports.downloadFile(url, path.join(basePath, baseName + '.' + extension));
+}
+
+function createFolder(dir) {
+    if (!fs.existsSync(dir)){
+        fs.mkdirSync(dir);
+    }
+}
+
+exports.createFolderStructure = function createFolderStructure(movie) {
     logger.debug("Creating folder structure");
-    var baseName = getBaseName(movie);
+    var baseName = exports.getBaseName(movie);
+    var basePath = path.join(config.get('cinema.movie-folder'), baseName);
+    createFolder(basePath);
+    createFolder(path.join(basePath, 'Images'));
 }
 
 function getFolders(dir) {
