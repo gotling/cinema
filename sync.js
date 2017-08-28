@@ -243,11 +243,10 @@ exports.downloadFile = function downloadFile(url, fileName) {
     })
     .on('error', function (err) {
         logger.error("Failed to download file '%s': %s", fileName, err);
-        // Do somethingfile with err
+        fs.unlinkSync(fileName);
     })
     .on('end', function () {
         logger.info("'%s' finished downloading", path.basename(fileName));
-        // Do something after request finishes
     })
     .pipe(fs.createWriteStream(fileName));
 }
