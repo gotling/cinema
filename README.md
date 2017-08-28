@@ -42,9 +42,9 @@ Paste the following to start movie every day at 19:00:
 
     0 19 * * * curl http://localhost/play
 
-Paste the following to delete old log files on boot:
+Send OMX player debug log to */dev/null* to not fill up or tear out the SD card. Edit */etc/fstab* and add the following in the end:
 
-    @reboot rm ~/cinema/omxplayer.old.log*
+    /dev/null /home/pi/cinema/omxplayer.log none defaults,bind 0 0
 
 Start slideshow on login.
 
