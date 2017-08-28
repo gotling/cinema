@@ -191,6 +191,14 @@ function secondsToString(seconds) {
     }
 }
 
+exports.getUrlFileSize = function getUrlFileSize(url) {
+    var r = request.get(url)
+    .on('response', function handleResponse(response) {
+        r.abort();
+        return Number(response.headers['content-length']) || null;
+    });
+}
+
 exports.downloadFile = function downloadFile(url, fileName) {
     logger.info("'%s' download started", path.basename(fileName));
     progress(request(url), {
