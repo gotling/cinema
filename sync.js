@@ -124,43 +124,56 @@ exports.downloadMissingFiles = function downloadMissingFiles(playlist) {
 }
 
 exports.downloadMovieFiles = function downloadMovieFiles(movie) {
-    exports.createFolderStructure(movie);
-    exports.downloadImages(movie);
-    exports.downloadMovie(movie);
+    return new Promise((resolve, reject) => {
+        exports.createFolderStructure(movie);
+        exports.downloadImages(movie).then(() => {
+            exports.downloadMovie(movie).then(() => {
+                resolve();
+            });
+        });
+    });
 }
 
 exports.downloadImages = function downloadImages(movie) {
-    let baseName = exports.getBaseName(movie);
-    let basePath = path.join(config.get('cinema.movie-folder'), baseName, imageFolder);
-    let images = emby.getImages(movie);
-    for (let image of images) {
-        let filePath = path.join(basePath, image.filename);
-        let url = emby.getImageUrl(movie, image.type);
-        if (exports.fileExists(filePath)) {
-            let urlSize = exports.getUrlFileSize(url);
-            // TODO: Check actual filesize and download again if different
-            logger.info("Image '%s' already exists", image.filename);
-        } else {
-            exports.downloadFile(url, path.join(basePath, image.filename));
+    return new Promise((resolve, reject) => {
+        let baseName = exports.getBaseName(movie);
+        let basePath = path.join(config.get('cinema.movie-folder'), baseName, imageFolder);
+        let images = emby.getImages(movie);
+        for (let image of images) {
+            let filePath = path.join(basePath, image.filename);
+            let url = emby.getImageUrl(movie, image.type);
+            if (exports.fileExists(filePath)) {
+                let urlSize = exports.getUrlFileSize(url);
+                // TODO: Check actual filesize and download again if different
+                logger.info("Image '%s' already exists", image.filename);
+                resolve();
+            } else {
+                exports.downloadFile(url, path.join(basePath, image.filename)).then(() => {
+                    resolve();
+                });
+            }
         }
-    }
+    });
 }
 
 exports.downloadMovie = function downloadMovie(movie) {
-    let baseName = exports.getBaseName(movie);
-    let extension = movie.Container;
-    let fileName = baseName + '.' + extension;
-    let basePath = path.join(config.get('cinema.movie-folder'), baseName);
-    let filePath = path.join(basePath, fileName);
-    let url = emby.getMovieUrl(movie);
+    return new Promise((resolve, reject) => {
+        let baseName = exports.getBaseName(movie);
+        let extension = movie.Container;
+        let fileName = baseName + '.' + extension;
+        let basePath = path.join(config.get('cinema.movie-folder'), baseName);
+        let filePath = path.join(basePath, fileName);
+        let url = emby.getMovieUrl(movie);
 
-    if (exports.fileExists(filePath)) {
-        let urlSize = exports.getUrlFileSize(url);
-        // TODO: Check actual filesize and download again if different
-        logger.info("Movie '%s' alredy exists", fileName);
-    } else {
-        exports.downloadFile(url, path.join(basePath, baseName + '.' + extension));
-    }
+        if (exports.fileExists(filePath)) {
+            let urlSize = exports.getUrlFileSize(url);
+            // TODO: Check actual filesize and download again if different
+            logger.info("Movie '%s' alredy exists", fileName);
+            resolve();
+        } else {
+            exports.downloadFile(url, path.join(basePath, baseName + '.' + extension)).then(resolve);
+        }
+    });
 }
 
 function createFolder(dir) {
@@ -215,38 +228,42 @@ exports.getUrlFileSize = function getUrlFileSize(url) {
     });
 }
 
-exports.downloadFile = function downloadFile(url, fileName) {
-    logger.info("'%s' download started", path.basename(fileName));
-    progress(request(url), {
-        throttle: 2000,                    // Throttle the progress event to 2000ms, defaults to 1000ms
-        delay: 1000,                       // Only start to emit after 1000ms delay, defaults to 0ms
-        // lengthHeader: 'x-transfer-length'  // Length header to use, defaults to content-length
-    })
-    .on('progress', function (state) {
-        // The state is an object that looks like this:
-        // {
-        //     percent: 0.5,               // Overall percent (between 0 to 1)
-        //     speed: 554732,              // The download speed in bytes/sec
-        //     size: {
-        //         total: 90044871,        // The total payload size in bytes
-        //         transferred: 27610959   // The transferred payload size in bytes
-        //     },
-        //     time: {
-        //         elapsed: 36.235,        // The total elapsed seconds since the start (3 decimals)
-        //         remaining: 81.403       // The remaining seconds to finish (3 decimals)
-        //     }
-        // }
-        let percent = Math.round(state.percent * 100);
+exports.downloadFile = function downloadFile(url, fileName, successCallback) {
+    return new Promise((resolve, reject) => {
+        logger.info("'%s' download started", path.basename(fileName));
+        progress(request(url), {
+            throttle: 2000,                    // Throttle the progress event to 2000ms, defaults to 1000ms
+            delay: 1000,                       // Only start to emit after 1000ms delay, defaults to 0ms
+            // lengthHeader: 'x-transfer-length'  // Length header to use, defaults to content-length
+        })
+        .on('progress', function (state) {
+            // The state is an object that looks like this:
+            // {
+            //     percent: 0.5,               // Overall percent (between 0 to 1)
+            //     speed: 554732,              // The download speed in bytes/sec
+            //     size: {
+            //         total: 90044871,        // The total payload size in bytes
+            //         transferred: 27610959   // The transferred payload size in bytes
+            //     },
+            //     time: {
+            //         elapsed: 36.235,        // The total elapsed seconds since the start (3 decimals)
+            //         remaining: 81.403       // The remaining seconds to finish (3 decimals)
+            //     }
+            // }
+            let percent = Math.round(state.percent * 100);
 
-        logger.info('%s: %d%% %s/%s (%s/s) ETA: %s',
-            path.basename(fileName), percent, byteToString(state.size.transferred), byteToString(state.size.total), byteToString(state.speed), secondsToString(state.time.remaining));
-    })
-    .on('error', function (err) {
-        logger.error("Failed to download file '%s': %s", fileName, err);
-        fs.unlinkSync(fileName);
-    })
-    .on('end', function () {
-        logger.info("'%s' finished downloading", path.basename(fileName));
-    })
-    .pipe(fs.createWriteStream(fileName));
+            logger.info('%s: %d%% %s/%s (%s/s) ETA: %s',
+                path.basename(fileName), percent, byteToString(state.size.transferred), byteToString(state.size.total), byteToString(state.speed), secondsToString(state.time.remaining));
+        })
+        .on('error', function (err) {
+            logger.error("Failed to download file '%s': %s", fileName, err);
+            fs.unlinkSync(fileName);
+            reject();
+        })
+        .on('end', function () {
+            logger.info("'%s' finished downloading", path.basename(fileName));
+            resolve();
+        })
+        .pipe(fs.createWriteStream(fileName));
+    });
 }
