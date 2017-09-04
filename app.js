@@ -4,11 +4,13 @@ var Omx = require('node-omxplayer');
 const fs = require('fs');
 var config = require('config');
 var logger = require('winston');
+const readLastLines = require('read-last-lines');
 
 var emby = require('./emby');
 var sync = require('./sync');
 
-logger.add(logger.transports.File, { filename: 'logging.log' });
+const logFile = 'logging.log';
+logger.add(logger.transports.File, { filename: logFile });
 
 const movieFolder = config.get('cinema.movie-folder');
 const nextMovieFile = config.get('cinema.next-movie-file');
@@ -115,6 +117,13 @@ app.get('/quit', (req, res) => {
     res.sendStatus(200);
 });
 
+app.get('/log', (req, res) => {
+    res.setHeader("content-type", "text/plain");
+    readLastLines.read(logFile, 20).then((lines) => {
+        res.send(lines);
+    });
+});
+
 function downloadAndSetMovie() {
     logger.info("Download and set favourite movie");
     emby.getPlaylist().then((playlist, err) => {
@@ -135,6 +144,11 @@ function setFbiImageFolder(movie) {
         fs.unlinkSync(config.get("cinema.poster-folder"));
     }
     fs.symlinkSync(imagePath, config.get("cinema.poster-folder"));
+}
+
+function reboot() {
+    logger.info("Rebooting machine");
+    require('child_process').exec('reboot', (msg) => { logger.info(msg) });
 }
 
 var server = app.listen(config.get('cinema.port'), () => {
