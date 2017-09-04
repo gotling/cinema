@@ -119,11 +119,12 @@ function downloadAndSetMovie() {
     logger.info("Download and set favourite movie");
     emby.getPlaylist().then((playlist, err) => {
         let favourite = emby.getFavourite(playlist.Items);
-        sync.downloadMovieFiles(favourite);
-        let filePath = sync.getMovieFilePath(favourite);
-        logger.info("Setting filename to '%s'", filePath);
-        setAndSaveNextMovie(filePath);
-        setFbiImageFolder(favourite);
+        sync.downloadMovieFiles(favourite).then((err) => {
+            logger.info("All files downloaded");
+            let filePath = sync.getMovieFilePath(favourite);
+            setAndSaveNextMovie(filePath);
+            setFbiImageFolder(favourite);
+        });
     });
 }
 
