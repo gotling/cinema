@@ -148,7 +148,7 @@ function setFbiImageFolder(movie) {
 
     // Kill fbi to have it reread images
     logger.info("Killing fbi process");
-    spawn('killall', ['fbi']);
+    spawn('killall', ['fbi', '--signal', 'QUIT']);
 }
 
 function reboot() {

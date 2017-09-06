@@ -2,5 +2,6 @@
 
 /usr/bin/fbi -d /dev/fb0 --noverbose --autozoom --timeout 60 /home/pi/posters/*
 
+# Restart slideshow if killed with signal QUIT (42)
 RETVAL=$?
-[ $RETVAL -eq 0 ] && ~/cinema/bin/showimage
+[ $RETVAL -eq 42 ] && ~/cinema/bin/showimage
