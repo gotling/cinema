@@ -1,2 +1,2 @@
-/usr/bin/fbi -d /dev/fb0\
- --noverbose --autozoom --timeout 60 /home/pi/posters/*
+/usr/bin/fbi -d /dev/fb0 --noverbose --autozoom --timeout 60 /home/pi/posters/* ;
+~/cinema/bin/showimage
