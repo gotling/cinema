@@ -1,4 +1,4 @@
 #!/bin/bash
 
 until ping -c1 github.com &>/dev/null; do :; done
-cd ~/cinema && git pull && npm install && pm2 restart cinema
+cd ~/cinema && git pull && npm install
