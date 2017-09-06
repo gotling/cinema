@@ -50,9 +50,9 @@ Send OMX player debug log to */dev/null* to not fill up or tear out the SD card.
 
     /dev/null /home/pi/cinema/omxplayer.log none defaults,bind 0 0
 
-Start slideshow on login.
+Start slideshow on login and restart if killed once:
 
-    echo '~/cinema/bin/showimage' >> ~/.bashrc
+    echo '~/cinema/bin/showimage ; ~/cinema/bin/showimage' >> ~/.bashrc
 
 Run as service:
 

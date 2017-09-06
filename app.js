@@ -2,6 +2,7 @@ const express = require('express');
 var bodyParser = require('body-parser');
 var Omx = require('node-omxplayer');
 const fs = require('fs');
+let spawn = require('child_process').spawn;
 var config = require('config');
 var logger = require('winston');
 const readLastLines = require('read-last-lines');
@@ -144,6 +145,10 @@ function setFbiImageFolder(movie) {
         fs.unlinkSync(config.get("cinema.poster-folder"));
     }
     fs.symlinkSync(imagePath, config.get("cinema.poster-folder"));
+
+    // Kill fbi to have it reread images
+    logger.info("Killing fbi process");
+    spawn('killall', ['fbi']);
 }
 
 function reboot() {
