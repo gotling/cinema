@@ -1,2 +1,6 @@
-/usr/bin/fbi -d /dev/fb0 --noverbose --autozoom --timeout 60 /home/pi/posters/* ;
-~/cinema/bin/showimage
+#!/bin/bash
+
+/usr/bin/fbi -d /dev/fb0 --noverbose --autozoom --timeout 60 /home/pi/posters/*
+
+RETVAL=$?
+[ $RETVAL -eq 0 ] && ~/cinema/bin/showimage
