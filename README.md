@@ -34,6 +34,10 @@ Install dependencies:
     cd ~/cinema/
     npm install --no-bin-links
 
+Make helper scripts executable:
+
+    chmod +x ~/cinema/bin/*
+
 Setup reoccurring tasks:
 
     crontab -e
