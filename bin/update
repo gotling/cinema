@@ -1,0 +1,3 @@
+#!/bin/bash
+
+cd ~/cinema && git pull && npm install && pm2 restart cinema
