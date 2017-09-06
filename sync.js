@@ -10,7 +10,7 @@ var emby = require('./emby');
 
 const rootFolder = '/movies/';
 const imageFolder = 'Images'
-const expectedImages = ['fanart.jpg', 'landscape.jpg', 'logo.png', 'poster.jpg'];
+const expectedImages = ['fanart.jpg', 'landscape.jpg', 'poster.jpg'];
 const expectedMovieExtension = ['.mkv', '.mp4'];
 const expectedSubtitleExtension = '.srt';
 

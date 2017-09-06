@@ -33,10 +33,10 @@ exports.getImages = function getImages(movie) {
     if ("Primary" in movie.ImageTags) {
         images.push({"filename": "poster.jpg", "type": "Primary"});
     }
-
-    if ("Logo" in movie.ImageTags) {
-        images.push({"filename": "logo.png", "type": "Logo"});
-    }
+    // 
+    // if ("Logo" in movie.ImageTags) {
+    //     images.push({"filename": "logo.png", "type": "Logo"});
+    // }
 
     if ("Thumb" in movie.ImageTags) {
         images.push({"filename": "landscape.jpg", "type": "Thumb"});
