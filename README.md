@@ -14,7 +14,7 @@ Install node.js:
 
 Allow nodejs to run on port 80 with standard user:
 
-    sudo setcap cap_net_bind_service=+ep /usr/bin/nodejs
+    sudo setcap cap_net_bind_service=+ep /usr/bin/node
 
 Install process manager:
 
