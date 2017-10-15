@@ -7,7 +7,9 @@ var config = require('config');
 var logger = require('winston');
 const readLastLines = require('read-last-lines');
 
-var emby = require('./emby');
+if (config.get('emby.enabled')) {
+  var emby = require('./emby');
+}
 var sync = require('./sync');
 
 const logFile = 'logging.log';
@@ -24,6 +26,13 @@ const app = express();
 app.use(express.static(__dirname + '/static'));
 app.use(bodyParser.urlencoded({extended: true}));
 
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
+
+
 app.get('/', (req, res) => {
   res.sendFile('index.html');
 });
@@ -33,13 +42,113 @@ app.get('/movies', (req, res) => {
     res.send(movies);
 });
 
+app.get('/list', (req, res) => {
+  logger.info('Listing movies and files');
+  res.send(listMovies());
+});
+
+app.post('/control/play', (req, res) => {
+  if (!player.running) {
+    logger.info("Remote: Starting playback of pre set filename");
+    player.newSource(fileName, 'both', true, 0, true);
+  } else {
+    logger.info("Remote: Pausing/Resuming playback")
+    player.play();
+  }
+  res.sendStatus(200);
+});
+
+app.post('/control/stop', (req, res) => {
+  if (player.running) {
+    logger.info("Remote: Stop");
+    player.quit();
+  }
+  res.sendStatus(200);
+});
+
+app.post('/control/fwd30', (req, res) => {
+  if (player.running) {
+    logger.info("Remote: Forwarding 30 seconds");
+    player.fwd30();
+  }
+  res.sendStatus(200);
+});
+
+app.post('/control/fwd600', (req, res) => {
+  if (player.running) {
+    logger.info("Remote: Forwarding 600 seconds");
+    player.fwd600();
+  }
+  res.sendStatus(200);
+});
+
+app.post('/control/back30', (req, res) => {
+  if (player.running) {
+    logger.info("Remote: Rewinding 30 seconds");
+    player.back30();
+  }
+  res.sendStatus(200);
+});
+
+app.post('/control/back600', (req, res) => {
+  if (player.running) {
+    logger.info("Remote: Rewinding 600 seconds");
+    player.back600();
+  }
+  res.sendStatus(200);
+});
+
+app.post('/control/subtitle.toggle', (req, res) => {
+  if (player.running) {
+    logger.info("Remote: Toggle subtitles");
+    player.subtitles();
+  }
+  res.sendStatus(200);
+});
+
+app.post('/control/subtitle.next', (req, res) => {
+  if (player.running) {
+    logger.info("Remote: Next subtitle");
+    player.nextSubtitle();
+  }
+  res.sendStatus(200);
+});
+
+app.post('/control/volume.up', (req, res) => {
+  if (player.running) {
+    logger.info("Remote: Volume up");
+    player.volUp();
+  }
+  res.sendStatus(200);
+});
+
+app.post('/control/volume.down', (req, res) => {
+  if (player.running) {
+    logger.info("Remote: Volume down");
+    player.volDown();
+  }
+  res.sendStatus(200);
+});
+
+app.post('/control/play.movie', (req, res) => {
+  let movie = url = req.body['name'];
+  fileName = movie;
+  if (!player.running) {
+    logger.info("Remote: Starting playback of pre set filename");
+    player.newSource(fileName, 'both', true, 0, true);
+  } else {
+    logger.info("Remote: Pausing/Resuming playback")
+    player.play();
+  }
+  res.sendStatus(200);
+});
+
 app.post('/control', (req, res) => {
   if (player.running) {
     switch(req.body.action) {
       case 'fwd30':
         logger.info("Remote: Forwarding 30 seconds");
         player.fwd30();
-        winston
         break;
       case 'fwd600':
         logger.info("Remote: Forwarding 600 seconds");
@@ -161,7 +270,9 @@ var server = app.listen(config.get('cinema.port'), () => {
 
   getMovies();
   readFileNameFromDisk();
-  downloadAndSetMovie();
+  if (config.get('emby.enabled')) {
+    downloadAndSetMovie();
+  }
 });
 
 function setAndSaveNextMovie(filePath) {
@@ -173,6 +284,20 @@ function setAndSaveNextMovie(filePath) {
 function getMovies() {
   movies = walkSync(movieFolder);
   logger.info("Found %d available files", movies.length);
+}
+
+function listMovies() {
+  var path = path || require('path');
+  var fs = fs || require('fs');
+  var files = fs.readdirSync(movieFolder);
+  let movies = [];
+  files.forEach(function(file) {
+    if (fs.statSync(path.join(movieFolder, file)).isDirectory()) {
+      let fileList = walkSync(path.join(movieFolder, file), []);
+      movies.push({'name': file, 'files': fileList});
+    }
+  });
+  return movies;
 }
 
 // List all files in a directory in Node.js recursively in a synchronous fashion

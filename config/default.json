@@ -6,6 +6,7 @@
         "poster-folder": "/home/pi/posters"
     },
     "emby": {
+        "enabled": false,
         "server": "http://emby.lan:8096",
         "api-key": "undefined",
         "user-id": "undefined",
