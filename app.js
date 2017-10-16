@@ -290,6 +290,9 @@ var server = app.listen(config.get('cinema.port'), () => {
   //readFileNameFromDisk();
   playlist.read().then(result => {
     playlist.updatePlaylist();
+    // Set todays movie to first in list
+    let list = playlist.get();
+    setAndSaveNextMovie(playlist.getMovieFilePath(list[0]));
   }).catch(err => {
     console.log('Could not read playlist', err);
   });
