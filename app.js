@@ -10,6 +10,7 @@ const readLastLines = require('read-last-lines');
 if (config.get('emby.enabled')) {
   var emby = require('./emby');
 }
+var playlist = require('./playlist');
 var sync = require('./sync');
 
 const logFile = 'logging.log';
@@ -19,7 +20,6 @@ const movieFolder = config.get('cinema.movie-folder');
 const nextMovieFile = config.get('cinema.next-movie-file');
 const posterFolder = config.get('cinema.poster-folder');
 var fileName = '';
-var playlist = [];
 var movies = [];
 var player = Omx();
 
@@ -50,7 +50,7 @@ app.get('/list', (req, res) => {
 
 app.get('/playlist', (req, res) => {
   logger.info('Returning playlist');
-  res.send(playlist);
+  res.send(playlist.get());
 });
 
 app.post('/control/play', (req, res) => {
@@ -241,7 +241,7 @@ app.get('/log', (req, res) => {
 });
 
 app.get('/init', (req, res) => {
-  makePlaylistFromAll();
+  playlist.makeFromAll();
   res.sendStatus(200);
 });
 
@@ -281,7 +281,7 @@ var server = app.listen(config.get('cinema.port'), () => {
 
   getMovies();
   //readFileNameFromDisk();
-  readPlaylist(config.get('cinema.playlist-file'));
+  playlist.read();
   if (config.get('emby.enabled')) {
     downloadAndSetMovie();
   }
@@ -296,20 +296,6 @@ function setAndSaveNextMovie(filePath) {
 function getMovies() {
   movies = walkSync(movieFolder);
   logger.info("Found %d available files", movies.length);
-}
-
-function listMovies() {
-  var path = path || require('path');
-  var fs = fs || require('fs');
-  var files = fs.readdirSync(movieFolder);
-  let movies = [];
-  files.forEach(function(file) {
-    if (fs.statSync(path.join(movieFolder, file)).isDirectory()) {
-      let fileList = walkSync(path.join(movieFolder, file), []);
-      movies.push({'name': file, 'files': fileList});
-    }
-  });
-  return movies;
 }
 
 // List all files in a directory in Node.js recursively in a synchronous fashion
@@ -348,40 +334,4 @@ function readFileNameFromDisk() {
       fileName = data;
     }
   });
-}
-
-function readPlaylist(fileName) {
-  fs.readFile(fileName, 'utf8', function (err, data) {
-    if (err) {
-      logger.warn("Could not read playlist. Error: %s", err);
-    } else {
-      playlist = JSON.parse(data);
-      logger.info("Read playlist: '%s'", playlist);
-    }
-  });
-}
-
-function writePlaylist(fileName, data) {
-  var json = JSON.stringify(data);
-  fs.writeFile(fileName, json, function(err) {
-    if (err) {
-      logger.warn("Could not write playlist. Error: %s", err);
-    } else {
-      logger.info("Saved playlist");
-    }
-  });
-}
-
-function makePlaylistFromAll() {
-  playlist = listMovies();
-  addDateToPlaylist();
-  writePlaylist(config.get('cinema.playlist-file'), playlist);
-}
-
-function addDateToPlaylist() {
-  var date = new Date();
-  for (let item of playlist) {
-    item['date'] = date.toISOString().substr(0, 10);
-    date.setDate(date.getDate() + 1);
-  }
 }
