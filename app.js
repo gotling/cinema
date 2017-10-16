@@ -33,7 +33,6 @@ app.use(function(req, res, next) {
   next();
 });
 
-
 app.get('/', (req, res) => {
   res.sendFile('index.html');
 });
