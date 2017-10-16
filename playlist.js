@@ -24,8 +24,8 @@ exports.read = function read() {
   });
 }
 
-exports.write = function write(data) {
-  var json = JSON.stringify(data);
+exports.write = function write() {
+  var json = JSON.stringify(playlist);
   fs.writeFile(config.get('cinema.playlist-file'), json, function(err) {
     if (err) {
       logger.warn("Could not write playlist. Error: %s", err);
@@ -38,7 +38,8 @@ exports.write = function write(data) {
 exports.makeFromAll = function makeFromAll() {
   playlist = listMovies();
   addDate();
-  exports.write(playlist);
+  exports.write();
+}
 }
 
 function addDate() {
