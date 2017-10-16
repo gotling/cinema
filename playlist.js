@@ -10,13 +10,17 @@ exports.get = function get() {
 }
 
 exports.read = function read() {
-  fs.readFile(config.get('cinema.playlist-file'), 'utf8', function (err, data) {
-    if (err) {
-      logger.warn("Could not read playlist. Error: %s", err);
-    } else {
-      playlist = JSON.parse(data);
-      logger.info("Read playlist: '%s'", playlist);
-    }
+  return new Promise((resolve, reject) => {
+    fs.readFile(config.get('cinema.playlist-file'), 'utf8', function (err, data) {
+      if (err) {
+        logger.warn("Could not read playlist. Error: %s", err);
+        reject();
+      } else {
+        playlist = JSON.parse(data);
+        logger.info("Read playlist: '%s'", playlist);
+        resolve(playlist);
+      }
+    });
   });
 }
 

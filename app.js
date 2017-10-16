@@ -281,7 +281,9 @@ var server = app.listen(config.get('cinema.port'), () => {
 
   getMovies();
   //readFileNameFromDisk();
-  playlist.read();
+  playlist.read().then(result => {
+  });
+
   if (config.get('emby.enabled')) {
     downloadAndSetMovie();
   }
