@@ -25,7 +25,7 @@ var player = Omx();
 
 const app = express();
 app.use(express.static(__dirname + '/static'));
-app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.json());
 
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
@@ -224,6 +224,14 @@ app.get('/play', (req, res) => {
     logger.info('Starting playback of pre set filename');
     player.newSource(fileName, 'both', true, 0, true);
     res.redirect('/');
+});
+
+app.post('/play-now', (req, res) => {
+  let movie = req.body;
+  let movieFilePath = playlist.getMovieFilePath(movie);
+  logger.info("Starting playback now of movie", movieFilePath);
+  player.newSource(movieFilePath, 'both', true, 0, true);
+  res.sendStatus(200);
 });
 
 app.get('/quit', (req, res) => {

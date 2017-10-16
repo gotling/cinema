@@ -46,8 +46,19 @@ exports.updatePlaylist = function updatePlaylist() {
   exports.write();
 }
 
+exports.getMovieFilePath = function getMovieFilePath(movie) {
+  const movieExtensions = ['mp4', 'mkv', 'avi'];
+  for (let file of movie['files']) {
+    for (let extension of movieExtensions) {
+      if (file.endsWith(extension)) {
+        return file;
+      }
+    }
+  }
+}
+
 /* Find playlist entries whose date has already passed.
-   Update date and put them last in list
+    Update date and put them last in list
   */
 function updateOrderAndDate() {
   let date = new Date();
