@@ -19,6 +19,7 @@ const movieFolder = config.get('cinema.movie-folder');
 const nextMovieFile = config.get('cinema.next-movie-file');
 const posterFolder = config.get('cinema.poster-folder');
 var fileName = '';
+var playlist = [];
 var movies = [];
 var player = Omx();
 
@@ -45,6 +46,11 @@ app.get('/movies', (req, res) => {
 app.get('/list', (req, res) => {
   logger.info('Listing movies and files');
   res.send(listMovies());
+});
+
+app.get('/playlist', (req, res) => {
+  logger.info('Returning playlist');
+  res.send(playlist);
 });
 
 app.post('/control/play', (req, res) => {
@@ -234,6 +240,11 @@ app.get('/log', (req, res) => {
     });
 });
 
+app.get('/init', (req, res) => {
+  makePlaylistFromAll();
+  res.sendStatus(200);
+});
+
 function downloadAndSetMovie() {
     logger.info("Download and set favourite movie");
     emby.getPlaylist().then((playlist, err) => {
@@ -269,7 +280,8 @@ var server = app.listen(config.get('cinema.port'), () => {
   logger.info('Cinema started. Remote available on port %d', config.get('cinema.port'));
 
   getMovies();
-  readFileNameFromDisk();
+  //readFileNameFromDisk();
+  readPlaylist(config.get('cinema.playlist-file'));
   if (config.get('emby.enabled')) {
     downloadAndSetMovie();
   }
@@ -336,4 +348,40 @@ function readFileNameFromDisk() {
       fileName = data;
     }
   });
+}
+
+function readPlaylist(fileName) {
+  fs.readFile(fileName, 'utf8', function (err, data) {
+    if (err) {
+      logger.warn("Could not read playlist. Error: %s", err);
+    } else {
+      playlist = JSON.parse(data);
+      logger.info("Read playlist: '%s'", playlist);
+    }
+  });
+}
+
+function writePlaylist(fileName, data) {
+  var json = JSON.stringify(data);
+  fs.writeFile(fileName, json, function(err) {
+    if (err) {
+      logger.warn("Could not write playlist. Error: %s", err);
+    } else {
+      logger.info("Saved playlist");
+    }
+  });
+}
+
+function makePlaylistFromAll() {
+  playlist = listMovies();
+  addDateToPlaylist();
+  writePlaylist(config.get('cinema.playlist-file'), playlist);
+}
+
+function addDateToPlaylist() {
+  var date = new Date();
+  for (let item of playlist) {
+    item['date'] = date.toISOString().substr(0, 10);
+    date.setDate(date.getDate() + 1);
+  }
 }
