@@ -282,6 +282,9 @@ var server = app.listen(config.get('cinema.port'), () => {
   getMovies();
   //readFileNameFromDisk();
   playlist.read().then(result => {
+    playlist.updatePlaylist();
+  }).catch(err => {
+    console.log('Could not read playlist', err);
   });
 
   if (config.get('emby.enabled')) {

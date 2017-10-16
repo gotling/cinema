@@ -40,6 +40,39 @@ exports.makeFromAll = function makeFromAll() {
   addDate();
   exports.write();
 }
+
+exports.updatePlaylist = function updatePlaylist() {
+  updateOrderAndDate();
+  exports.write();
+}
+
+/* Find playlist entries whose date has already passed.
+   Update date and put them last in list
+  */
+function updateOrderAndDate() {
+  let date = new Date();
+  date.setHours(0, 0, 0, 0);
+  let lastDate = new Date(playlist[playlist.length - 1]['date']);
+  let offset = 1;
+  let newList = playlist.slice();
+
+  // All dates in playlist already passed
+  if (lastDate < date) {
+    lastDate = new Date();
+    offset = 0;
+  }
+
+  for (let item of playlist) {
+    if (date > new Date(item['date'])) {
+      let putLast = newList.splice(0, 1)[0];
+      lastDate.setDate(lastDate.getDate() + offset);
+      putLast['date'] = lastDate.toISOString().substr(0, 10);
+      newList.push(putLast);
+      offset++;
+    }
+  }
+  playlist = newList;
+  logger.info('Updated date and order');
 }
 
 function addDate() {
