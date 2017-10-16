@@ -3,6 +3,7 @@
         "port": 3000,
         "movie-folder": "/data/Media/Movies/",
         "next-movie-file": "/home/pi/nextMovie.txt",
+        "playlist-file": "/movies/playlist.json",
         "poster-folder": "/home/pi/posters"
     },
     "emby": {
