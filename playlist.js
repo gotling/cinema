@@ -86,7 +86,7 @@ function updateOrderAndDate() {
   logger.info('Updated date and order');
 }
 
-function addDate() {
+exports.addDate = function addDate() {
   var date = new Date();
   for (let item of playlist) {
     item['date'] = date.toISOString().substr(0, 10);

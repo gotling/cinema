@@ -252,6 +252,11 @@ app.get('/init', (req, res) => {
   res.sendStatus(200);
 });
 
+app.get('/add-date', (req, res) => {
+  playlist.addDate();
+  res.sendStatus(200);
+});
+
 function downloadAndSetMovie() {
     logger.info("Download and set favourite movie");
     emby.getPlaylist().then((playlist, err) => {
