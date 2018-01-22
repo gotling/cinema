@@ -7,6 +7,10 @@ A Raspberry Pi running [Raspbian](https://www.raspberrypi.org/downloads/raspbian
 
 ## Installation
 
+Install git:
+
+    sudo apt install git
+
 Install node.js:
 
     curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
