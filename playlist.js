@@ -37,7 +37,7 @@ exports.write = function write() {
 
 exports.makeFromAll = function makeFromAll() {
   playlist = listMovies();
-  addDate();
+  exports.addDate();
   exports.write();
 }
 
